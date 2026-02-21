@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LevviCode Info</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <style>
+    :root {
+      --bg-gradient-start: #f0f7ff;
+      --bg-gradient-end: #ffffff;
+      --card-bg: rgba(255,255,255,0.8);
+      --card-border: rgba(255,255,255,0.5);
+      --text-primary: #0a2540;
+      --text-secondary: #4a5b6e;
+      --btn-text: #ffffff;
+      --shadow-color: rgba(13, 110, 253, 0.25);
+      --footer-text: #64748b;
+    }
+    body.dark {
+      --bg-gradient-start: #0b1a2e;
+      --bg-gradient-end: #1a2a3a;
+      --card-bg: rgba(20, 30, 45, 0.9);
+      --card-border: rgba(255,255,255,0.1);
+      --text-primary: #e2e8f0;
+      --text-secondary: #a0b3c9;
+      --btn-text: #ffffff;
+      --shadow-color: rgba(0,0,0,0.5);
+      --footer-text: #8fa3b8;
+    }
+    body {
+      background: linear-gradient(145deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      padding: 20px;
+      margin: 0;
+      transition: background 0.3s ease, color 0.2s ease;
+    }
+    .linktree-card {
+      max-width: 500px;
+      width: 100%;
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 2.5rem;
+      box-shadow: 0 25px 45px -12px var(--shadow-color);
+      padding: 2.5rem 2rem;
+      border: 1px solid var(--card-border);
+      transition: transform 0.3s ease, background 0.3s ease;
+      position: relative;
+    }
+    .linktree-card:hover {
+      transform: scale(1.01);
+    }
+    .theme-toggle {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1.5rem;
+      color: var(--text-primary);
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .theme-toggle:hover {
+      transform: rotate(15deg) scale(1.1);
+      background: linear-gradient(135deg, #8B5CF6, #3B82F6);
+      color: white;
+      border-color: transparent;
+    }
+    .avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #8B5CF6, #3B82F6, #2DD4BF);
+      padding: 4px;
+      margin: 0 auto 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      background: white;
+    }
+    .greeting {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+    }
+    .sub {
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+      font-size: 1rem;
+    }
+    .btn-linktree {
+      background: linear-gradient(135deg, #8B5CF6, #3B82F6, #2DD4BF);
+      border: none;
+      border-radius: 60px !important;
+      padding: 1rem 1.5rem;
+      margin-bottom: 1rem;
+      font-weight: 500;
+      color: white;
+      box-shadow: 0 8px 20px rgba(255, 255, 255, 0.3);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    body.dark .btn-linktree {
+      background: linear-gradient(135deg, #4c1d95, #1e3a8a, #115e59);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+    }
+    .btn-linktree i {
+      font-size: 1.8rem;
+      min-width: 2rem;
+      text-align: center;
+      color: white;
+      transition: transform 0.2s;
+    }
+    .btn-linktree:hover {
+      transform: translateY(-5px) scale(1.02);
+      box-shadow: 0 20px 30px rgba(139, 92, 246, 0.5), 0 0 20px rgba(255,255,255,0.5);
+      background: linear-gradient(135deg, #7C3AED, #2563EB, #14B8A6);
+    }
+    body.dark .btn-linktree:hover {
+      box-shadow: 0 20px 30px rgba(0, 0, 0, 0.8), 0 0 15px rgba(255,255,255,0.2);
+      background: linear-gradient(135deg, #5b21b6, #1e40af, #0f766e);
+    }
+    .footer-note {
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      color: var(--footer-text);
+    }
+    .footer-note a {
+      color: #8B5CF6;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .footer-note a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="linktree-card">
+    <div class="theme-toggle" id="themeToggle">
+      <i class="bi bi-sun-fill"></i>
+    </div>
+    <div class="avatar">
+      <img src="https://files.catbox.moe/u9gxkr.jpg" alt="LevviCode Profile">
+    </div>
+    <h1 class="greeting text-center">LevviCode</h1>
+    <p class="sub text-center">Solusi Digital Kreatif</p>
+    <div class="d-flex flex-column">
+      <a href="https://wa.me/628138045539" target="_blank" rel="noopener noreferrer" class="btn-linktree text-decoration-none">
+        <i class="bi bi-whatsapp"></i>
+        <span>Hubungi via WhatsApp</span>
+      </a>
+      <a href="https://t.me/levvicode" target="_blank" rel="noopener noreferrer" class="btn-linktree text-decoration-none">
+        <i class="bi bi-telegram"></i>
+        <span>Chat di Telegram</span>
+      </a>
+      <a href="https://order.levvicode.cloud" target="_blank" rel="noopener noreferrer" class="btn-linktree text-decoration-none">
+        <i class="bi bi-cart-check"></i>
+        <span>Auto Order Website</span>
+      </a>
+      <a href="https://t.me/levvicode_bot" target="_blank" rel="noopener noreferrer" class="btn-linktree text-decoration-none">
+        <i class="bi bi-robot"></i>
+        <span>Auto Order Bot Telegram</span>
+      </a>
+    </div>
+    <div class="footer-note text-center">
+      <p>🔥 Layanan instan & otomatis oleh <a href="https://levvicode.cloud">LevviCode</a></p>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    (function() {
+      const themeToggle = document.getElementById('themeToggle');
+      const icon = themeToggle.querySelector('i');
+      const body = document.body;
+      const savedTheme = localStorage.getItem('theme');
+      
+      if (!savedTheme) {
+        body.classList.add('dark');
+        icon.classList.remove('bi-sun-fill');
+        icon.classList.add('bi-moon-fill');
+        localStorage.setItem('theme', 'dark');
+      } else if (savedTheme === 'dark') {
+        body.classList.add('dark');
+        icon.classList.remove('bi-sun-fill');
+        icon.classList.add('bi-moon-fill');
+      } else {
+        body.classList.remove('dark');
+        icon.classList.remove('bi-moon-fill');
+        icon.classList.add('bi-sun-fill');
+      }
+
+      themeToggle.addEventListener('click', function() {
+        if (body.classList.contains('dark')) {
+          body.classList.remove('dark');
+          icon.classList.remove('bi-moon-fill');
+          icon.classList.add('bi-sun-fill');
+          localStorage.setItem('theme', 'light');
+        } else {
+          body.classList.add('dark');
+          icon.classList.remove('bi-sun-fill');
+          icon.classList.add('bi-moon-fill');
+          localStorage.setItem('theme', 'dark');
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

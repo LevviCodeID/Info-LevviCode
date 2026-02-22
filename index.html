@@ -285,15 +285,21 @@
       const skeleton = document.getElementById('skeleton-wrapper');
       const content = document.getElementById('content-wrapper');
       
+      // Skeleton + munculkan konten setelah 2 detik
       setTimeout(() => {
         skeleton.style.opacity = '0';
         setTimeout(() => {
           skeleton.style.display = 'none';
           content.style.display = 'block';
           content.style.opacity = '1';
+          // Setelah konten tampil, segera catat kunjungan (hit)
+          updateHit();
+          // Perbarui jumlah kunjungan setiap 30 detik (real-time)
+          setInterval(updateCount, 30000);
         }, 500);
       }, 2000);
 
+      // Theme toggle
       const themeToggle = document.getElementById('themeToggle');
       const icon = themeToggle.querySelector('i');
       const body = document.body;
@@ -328,22 +334,39 @@
         }
       });
 
+      // ===== VISIT COUNTER REAL-TIME =====
       const visitSpan = document.getElementById('visitNumber');
+      const HIT_URL = 'https://api.countapi.xyz/hit/levvicodelinktree/visits';
+      const GET_URL = 'https://api.countapi.xyz/get/levvicodelinktree/visits';
 
-      function updateVisitCount() {
-        fetch('https://api.countapi.xyz/hit/levvicodelinktree/visits')
-          .then(response => response.json())
-          .then(data => {
-            visitSpan.textContent = data.value;
-          })
-          .catch(error => {
-            console.error('Gagal mengambil jumlah kunjungan:', error);
-            visitSpan.textContent = 'N/A';
-          });
+      // Fungsi untuk menambah hit (dipanggil sekali saat halaman dibuka)
+      async function updateHit() {
+        try {
+          const response = await fetch(HIT_URL);
+          const data = await response.json();
+          visitSpan.textContent = data.value;
+        } catch (error) {
+          console.error('Gagal mencatat kunjungan:', error);
+          visitSpan.textContent = 'N/A';
+        }
       }
 
-      setTimeout(updateVisitCount, 2500);
+      // Fungsi untuk mengambil nilai terbaru (tanpa menambah hit)
+      async function updateCount() {
+        try {
+          const response = await fetch(GET_URL);
+          const data = await response.json();
+          // Hanya perbarui jika berhasil, biarkan nilai lama jika error
+          if (data && data.value !== undefined) {
+            visitSpan.textContent = data.value;
+          }
+        } catch (error) {
+          console.error('Gagal mengambil jumlah kunjungan:', error);
+          // Tetap tampilkan nilai terakhir, tidak diubah menjadi N/A
+        }
+      }
 
+      // Inisialisasi partikel
       tsParticles.load({
         id: "tsparticles",
         options: {

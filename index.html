@@ -291,12 +291,9 @@
           skeleton.style.display = 'none';
           content.style.display = 'block';
           content.style.opacity = '1';
-          
-          initGlobalVisit();
         }, 500);
       }, 2000);
 
-      // Theme toggle
       const themeToggle = document.getElementById('themeToggle');
       const icon = themeToggle.querySelector('i');
       const body = document.body;
@@ -331,33 +328,22 @@
         }
       });
 
-      // Global visit counter menggunakan CountAPI
-      async function initGlobalVisit() {
-        const visitSpan = document.getElementById('visitNumber');
-        const NAMESPACE = 'levvicode';
-        const KEY = 'total_visits';
-        const START_VALUE = 3787; // akan menjadi 3788 setelah increment pertama
+      const visitSpan = document.getElementById('visitNumber');
 
-        try {
-          // Buat key dengan nilai awal (hanya dijalankan sekali seumur hidup key)
-          await fetch(`https://api.countapi.xyz/create?namespace=${NAMESPACE}&key=${KEY}&value=${START_VALUE}`);
-          
-          // Hit (increment) dan ambil nilai terbaru
-          const hitRes = await fetch(`https://api.countapi.xyz/hit/${NAMESPACE}/${KEY}`);
-          const hitData = await hitRes.json();
-          
-          if (hitData && hitData.value !== undefined) {
-            visitSpan.textContent = hitData.value;
-          } else {
-            visitSpan.textContent = '?';
-          }
-        } catch (error) {
-          console.error('Gagal mengambil data kunjungan:', error);
-          visitSpan.textContent = '!';
-        }
+      function updateVisitCount() {
+        fetch('https://api.countapi.xyz/hit/levvicodelinktree/visits')
+          .then(response => response.json())
+          .then(data => {
+            visitSpan.textContent = data.value;
+          })
+          .catch(error => {
+            console.error('Gagal mengambil jumlah kunjungan:', error);
+            visitSpan.textContent = 'N/A';
+          });
       }
 
-      // Particles
+      setTimeout(updateVisitCount, 2500);
+
       tsParticles.load({
         id: "tsparticles",
         options: {

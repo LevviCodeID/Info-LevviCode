@@ -334,35 +334,71 @@
         }
       });
 
-      // ===== VISIT COUNTER REAL-TIME =====
+      // ===== VISIT COUNTER MENGGUNAKAN VERCEL API =====
+      // Ganti BASE_URL berikut dengan URL endpoint Vercel API Anda
+      // Contoh: https://your-app.vercel.app/api
+      const API_BASE_URL = 'https://your-vercel-api.vercel.app/api';  // <-- GANTI INI!
+
+      // Asumsi endpoint:
+      // - GET  /visits -> mengembalikan { count: number }
+      // - POST /visits -> mengembalikan { count: number } (untuk increment)
+      const VISIT_ENDPOINT = `${API_BASE_URL}/visits`;
+
       const visitSpan = document.getElementById('visitNumber');
-      const HIT_URL = 'https://api.countapi.xyz/hit/levvicodelinktree/visits';
-      const GET_URL = 'https://api.countapi.xyz/get/levvicodelinktree/visits';
+
+      // Fungsi untuk menyimpan count ke localStorage sebagai cadangan
+      function saveCountToLocal(count) {
+        localStorage.setItem('visitCount', count);
+      }
+
+      function getCountFromLocal() {
+        return localStorage.getItem('visitCount');
+      }
 
       // Fungsi untuk menambah hit (dipanggil sekali saat halaman dibuka)
       async function updateHit() {
         try {
-          const response = await fetch(HIT_URL);
+          const response = await fetch(VISIT_ENDPOINT, {
+            method: 'POST', // atau GET jika endpoint menggunakan query parameter untuk increment
+            headers: { 'Content-Type': 'application/json' }
+          });
+          if (!response.ok) throw new Error('Network response was not ok');
           const data = await response.json();
-          visitSpan.textContent = data.value;
+          const count = data.count;
+          visitSpan.textContent = count;
+          saveCountToLocal(count);
         } catch (error) {
-          console.error('Gagal mencatat kunjungan:', error);
-          visitSpan.textContent = 'N/A';
+          console.error('Gagal mencatat kunjungan ke Vercel API:', error);
+          // Fallback: gunakan localStorage
+          const localCount = getCountFromLocal();
+          if (localCount) {
+            visitSpan.textContent = localCount;
+          } else {
+            visitSpan.textContent = '0';
+          }
         }
       }
 
       // Fungsi untuk mengambil nilai terbaru (tanpa menambah hit)
       async function updateCount() {
         try {
-          const response = await fetch(GET_URL);
+          const response = await fetch(VISIT_ENDPOINT, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+          });
+          if (!response.ok) throw new Error('Network response was not ok');
           const data = await response.json();
-          // Hanya perbarui jika berhasil, biarkan nilai lama jika error
-          if (data && data.value !== undefined) {
-            visitSpan.textContent = data.value;
-          }
+          const count = data.count;
+          visitSpan.textContent = count;
+          saveCountToLocal(count);
         } catch (error) {
-          console.error('Gagal mengambil jumlah kunjungan:', error);
-          // Tetap tampilkan nilai terakhir, tidak diubah menjadi N/A
+          console.error('Gagal mengambil jumlah kunjungan dari Vercel API:', error);
+          // Fallback: tetap pakai nilai terakhir dari localStorage
+          const localCount = getCountFromLocal();
+          if (localCount) {
+            visitSpan.textContent = localCount;
+          }
+          // jika tidak ada, biarkan angka sebelumnya
         }
       }
 

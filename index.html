@@ -291,9 +291,12 @@
           skeleton.style.display = 'none';
           content.style.display = 'block';
           content.style.opacity = '1';
+          
+          initGlobalVisit();
         }, 500);
       }, 2000);
 
+      // Theme toggle
       const themeToggle = document.getElementById('themeToggle');
       const icon = themeToggle.querySelector('i');
       const body = document.body;
@@ -328,60 +331,50 @@
         }
       });
 
-      const visitSpan = document.getElementById('visitNumber');
-      
-      function updateVisitCount() {
-        let visits = localStorage.getItem('levvicode_visits');
-        if (visits) {
-          visits = parseInt(visits, 10) + 1;
-        } else {
-          visits = 1;
-        }
-        localStorage.setItem('levvicode_visits', visits);
-        visitSpan.textContent = visits;
-      }
-      
-      setTimeout(updateVisitCount, 2500);
+      // Global visit counter menggunakan CountAPI
+      async function initGlobalVisit() {
+        const visitSpan = document.getElementById('visitNumber');
+        const NAMESPACE = 'levvicode';
+        const KEY = 'total_visits';
+        const START_VALUE = 3787; // akan menjadi 3788 setelah increment pertama
 
+        try {
+          // Buat key dengan nilai awal (hanya dijalankan sekali seumur hidup key)
+          await fetch(`https://api.countapi.xyz/create?namespace=${NAMESPACE}&key=${KEY}&value=${START_VALUE}`);
+          
+          // Hit (increment) dan ambil nilai terbaru
+          const hitRes = await fetch(`https://api.countapi.xyz/hit/${NAMESPACE}/${KEY}`);
+          const hitData = await hitRes.json();
+          
+          if (hitData && hitData.value !== undefined) {
+            visitSpan.textContent = hitData.value;
+          } else {
+            visitSpan.textContent = '?';
+          }
+        } catch (error) {
+          console.error('Gagal mengambil data kunjungan:', error);
+          visitSpan.textContent = '!';
+        }
+      }
+
+      // Particles
       tsParticles.load({
         id: "tsparticles",
         options: {
-          background: {
-            color: "transparent"
-          },
+          background: { color: "transparent" },
           particles: {
-            number: {
-              value: 60,
-              density: {
-                enable: true,
-                area: 800
-              }
-            },
-            color: {
-              value: "#8B5CF6"
-            },
-            shape: {
-              type: "circle"
-            },
+            number: { value: 60, density: { enable: true, area: 800 } },
+            color: { value: "#8B5CF6" },
+            shape: { type: "circle" },
             opacity: {
               value: 0.4,
               random: true,
-              animation: {
-                enable: true,
-                speed: 1,
-                minimumValue: 0.1,
-                sync: false
-              }
+              animation: { enable: true, speed: 1, minimumValue: 0.1, sync: false }
             },
             size: {
               value: 3,
               random: true,
-              animation: {
-                enable: true,
-                speed: 2,
-                minimumValue: 0.5,
-                sync: false
-              }
+              animation: { enable: true, speed: 2, minimumValue: 0.5, sync: false }
             },
             links: {
               enable: true,
@@ -396,35 +389,18 @@
               direction: "none",
               random: true,
               straight: false,
-              outModes: {
-                default: "bounce"
-              },
-              attract: {
-                enable: false
-              }
+              outModes: { default: "bounce" },
+              attract: { enable: false }
             }
           },
           interactivity: {
             events: {
-              onHover: {
-                enable: true,
-                mode: "grab"
-              },
-              onClick: {
-                enable: true,
-                mode: "push"
-              }
+              onHover: { enable: true, mode: "grab" },
+              onClick: { enable: true, mode: "push" }
             },
             modes: {
-              grab: {
-                distance: 200,
-                links: {
-                  opacity: 0.5
-                }
-              },
-              push: {
-                quantity: 4
-              }
+              grab: { distance: 200, links: { opacity: 0.5 } },
+              push: { quantity: 4 }
             }
           },
           detectRetina: true

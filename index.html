@@ -285,21 +285,17 @@
       const skeleton = document.getElementById('skeleton-wrapper');
       const content = document.getElementById('content-wrapper');
       
-      // Skeleton + munculkan konten setelah 2 detik
       setTimeout(() => {
         skeleton.style.opacity = '0';
         setTimeout(() => {
           skeleton.style.display = 'none';
           content.style.display = 'block';
           content.style.opacity = '1';
-          // Setelah konten tampil, segera catat kunjungan (hit)
           updateHit();
-          // Perbarui jumlah kunjungan setiap 30 detik (real-time)
           setInterval(updateCount, 30000);
         }, 500);
       }, 2000);
 
-      // Theme toggle
       const themeToggle = document.getElementById('themeToggle');
       const icon = themeToggle.querySelector('i');
       const body = document.body;
@@ -334,19 +330,10 @@
         }
       });
 
-      // ===== VISIT COUNTER MENGGUNAKAN VERCEL API =====
-      // Ganti BASE_URL berikut dengan URL endpoint Vercel API Anda
-      // Contoh: https://your-app.vercel.app/api
-      const API_BASE_URL = 'https://your-vercel-api.vercel.app/api';  // <-- GANTI INI!
-
-      // Asumsi endpoint:
-      // - GET  /visits -> mengembalikan { count: number }
-      // - POST /visits -> mengembalikan { count: number } (untuk increment)
+      const API_BASE_URL = 'https://your-vercel-api.vercel.app/api';
       const VISIT_ENDPOINT = `${API_BASE_URL}/visits`;
-
       const visitSpan = document.getElementById('visitNumber');
 
-      // Fungsi untuk menyimpan count ke localStorage sebagai cadangan
       function saveCountToLocal(count) {
         localStorage.setItem('visitCount', count);
       }
@@ -355,54 +342,36 @@
         return localStorage.getItem('visitCount');
       }
 
-      // Fungsi untuk menambah hit (dipanggil sekali saat halaman dibuka)
       async function updateHit() {
         try {
-          const response = await fetch(VISIT_ENDPOINT, {
-            method: 'POST', // atau GET jika endpoint menggunakan query parameter untuk increment
-            headers: { 'Content-Type': 'application/json' }
-          });
+          const response = await fetch(VISIT_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' } });
           if (!response.ok) throw new Error('Network response was not ok');
           const data = await response.json();
           const count = data.count;
           visitSpan.textContent = count;
           saveCountToLocal(count);
         } catch (error) {
-          console.error('Gagal mencatat kunjungan ke Vercel API:', error);
-          // Fallback: gunakan localStorage
+          console.error('Gagal mencatat kunjungan:', error);
           const localCount = getCountFromLocal();
-          if (localCount) {
-            visitSpan.textContent = localCount;
-          } else {
-            visitSpan.textContent = '0';
-          }
+          visitSpan.textContent = localCount || '0';
         }
       }
 
-      // Fungsi untuk mengambil nilai terbaru (tanpa menambah hit)
       async function updateCount() {
         try {
-          const response = await fetch(VISIT_ENDPOINT, {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' }
-          });
+          const response = await fetch(VISIT_ENDPOINT, { method: 'GET', headers: { 'Content-Type': 'application/json' } });
           if (!response.ok) throw new Error('Network response was not ok');
           const data = await response.json();
           const count = data.count;
           visitSpan.textContent = count;
           saveCountToLocal(count);
         } catch (error) {
-          console.error('Gagal mengambil jumlah kunjungan dari Vercel API:', error);
-          // Fallback: tetap pakai nilai terakhir dari localStorage
+          console.error('Gagal mengambil jumlah kunjungan:', error);
           const localCount = getCountFromLocal();
-          if (localCount) {
-            visitSpan.textContent = localCount;
-          }
-          // jika tidak ada, biarkan angka sebelumnya
+          if (localCount) visitSpan.textContent = localCount;
         }
       }
 
-      // Inisialisasi partikel
       tsParticles.load({
         id: "tsparticles",
         options: {
@@ -411,42 +380,14 @@
             number: { value: 60, density: { enable: true, area: 800 } },
             color: { value: "#8B5CF6" },
             shape: { type: "circle" },
-            opacity: {
-              value: 0.4,
-              random: true,
-              animation: { enable: true, speed: 1, minimumValue: 0.1, sync: false }
-            },
-            size: {
-              value: 3,
-              random: true,
-              animation: { enable: true, speed: 2, minimumValue: 0.5, sync: false }
-            },
-            links: {
-              enable: true,
-              distance: 150,
-              color: "#3B82F6",
-              opacity: 0.2,
-              width: 1
-            },
-            move: {
-              enable: true,
-              speed: 1,
-              direction: "none",
-              random: true,
-              straight: false,
-              outModes: { default: "bounce" },
-              attract: { enable: false }
-            }
+            opacity: { value: 0.4, random: true, animation: { enable: true, speed: 1, minimumValue: 0.1, sync: false } },
+            size: { value: 3, random: true, animation: { enable: true, speed: 2, minimumValue: 0.5, sync: false } },
+            links: { enable: true, distance: 150, color: "#3B82F6", opacity: 0.2, width: 1 },
+            move: { enable: true, speed: 1, direction: "none", random: true, straight: false, outModes: { default: "bounce" }, attract: { enable: false } }
           },
           interactivity: {
-            events: {
-              onHover: { enable: true, mode: "grab" },
-              onClick: { enable: true, mode: "push" }
-            },
-            modes: {
-              grab: { distance: 200, links: { opacity: 0.5 } },
-              push: { quantity: 4 }
-            }
+            events: { onHover: { enable: true, mode: "grab" }, onClick: { enable: true, mode: "push" } },
+            modes: { grab: { distance: 200, links: { opacity: 0.5 } }, push: { quantity: 4 } }
           },
           detectRetina: true
         }
